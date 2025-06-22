@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "last_updated": "2025-06-20",
+    "source": "Sở GD&ĐT Hà Nội, TP.HCM, Đà Nẵng,...",
+    "description": "Tổng hợp đề thi tuyển sinh lớp 6 các năm 2023, 2024, chính thống từ nhiều tỉnh thành."
+  },
+  "de_thi": [
+    {
+      "id": "dt_2023_hn_01",
+      "title": "Đề thi tuyển sinh lớp 6 năm 2023 - Hà Nội",
+      "date": "2023-06-15",
+      "location": "Hà Nội",
+      "subjects": {
+        "toan": {
+          "cap_do_1": [...],
+          "cap_do_2": [...],
+          "cap_do_3": [...]
+        },
+        "tieng_viet": {
+          "cap_do_1": [...],
+          "cap_do_2": [...],
+          "cap_do_3": [...]
+        },
+        "hinh_hoc_thi_giac": {
+          "cap_do_1": [...],
+          "cap_do_2": [...],
+          "cap_do_3": [...]
+        }
+      }
+    },
+    {
+      "id": "dt_2024_hcm_02",
+      "title": "Đề thi tuyển sinh lớp 6 năm 2024 - TP.HCM",
+      "date": "2024-06-10",
+      "location": "TP.HCM",
+      "subjects": {
+        "toan": {...},
+        "tieng_viet": {...},
+        "hinh_hoc_thi_giac": {...}
+      }
+    }
+    // Các đề thi khác ...
+  ]
+}
