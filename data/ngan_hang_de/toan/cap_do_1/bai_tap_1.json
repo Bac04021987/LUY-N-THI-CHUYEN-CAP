@@ -1,0 +1,16 @@
+[
+  {
+    "id": "toan1_001",
+    "title": "Tính tổng hai số đơn giản",
+    "content": "Tính tổng của 2 và 3.",
+    "level": 1,
+    "answer": 5
+  },
+  {
+    "id": "toan1_002",
+    "title": "Phép cộng trong phạm vi 10",
+    "content": "Tính 7 cộng 8 bằng bao nhiêu?",
+    "level": 1,
+    "answer": 15
+  }
+]
