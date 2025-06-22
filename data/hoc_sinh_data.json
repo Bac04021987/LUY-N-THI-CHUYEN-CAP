@@ -1,0 +1,27 @@
+{
+  "hs001": {
+    "name": "Nguyễn Văn A",
+    "class": "5A",
+    "dob": "2013-04-12",
+    "tien_do": [
+      {
+        "date": "2025-06-10",
+        "subject": "toan",
+        "score": 8,
+        "comment": "Làm tốt phần phép cộng"
+      },
+      {
+        "date": "2025-06-15",
+        "subject": "tieng_viet",
+        "score": 7,
+        "comment": "Cần cải thiện kỹ năng đọc hiểu"
+      }
+    ]
+  },
+  "hs002": {
+    "name": "Trần Thị B",
+    "class": "5B",
+    "dob": "2013-09-30",
+    "tien_do": []
+  }
+}
