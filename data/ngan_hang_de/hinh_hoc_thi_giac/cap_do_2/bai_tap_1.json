@@ -1,0 +1,16 @@
+[
+  {
+    "id": "hh2_001",
+    "title": "Tính chu vi hình chữ nhật",
+    "content": "Một hình chữ nhật có chiều dài 8 cm và chiều rộng 5 cm. Tính chu vi hình chữ nhật đó.",
+    "level": 2,
+    "answer": 26
+  },
+  {
+    "id": "hh2_002",
+    "title": "Tính diện tích hình tam giác",
+    "content": "Tính diện tích hình tam giác có đáy 6 cm và chiều cao 4 cm.",
+    "level": 2,
+    "answer": 12
+  }
+]
