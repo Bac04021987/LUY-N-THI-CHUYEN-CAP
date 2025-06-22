@@ -1,0 +1,16 @@
+[
+  {
+    "id": "tv3_001",
+    "title": "Phân tích câu văn",
+    "content": "Phân tích thành phần câu trong câu: 'Con mèo đen đang ngủ trên ghế.'",
+    "level": 3,
+    "answer": "Chủ ngữ: Con mèo đen; Động từ: đang ngủ; Bổ ngữ: trên ghế."
+  },
+  {
+    "id": "tv3_002",
+    "title": "Viết đoạn văn ngắn",
+    "content": "Viết một đoạn văn ngắn về chủ đề mùa hè.",
+    "level": 3,
+    "answer": "Mùa hè là mùa của những ngày nắng nóng. Trẻ em thường được nghỉ hè và đi chơi nhiều nơi..."
+  }
+]
