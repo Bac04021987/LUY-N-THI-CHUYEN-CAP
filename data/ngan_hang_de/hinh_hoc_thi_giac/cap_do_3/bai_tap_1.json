@@ -1,0 +1,16 @@
+[
+  {
+    "id": "hh3_001",
+    "title": "Tính thể tích hình hộp chữ nhật",
+    "content": "Một hình hộp chữ nhật có chiều dài 10 cm, chiều rộng 5 cm và chiều cao 4 cm. Tính thể tích hình hộp đó.",
+    "level": 3,
+    "answer": 200
+  },
+  {
+    "id": "hh3_002",
+    "title": "Tính diện tích xung quanh hình lập phương",
+    "content": "Một hình lập phương có cạnh 6 cm. Tính diện tích xung quanh hình lập phương đó.",
+    "level": 3,
+    "answer": 144
+  }
+]
