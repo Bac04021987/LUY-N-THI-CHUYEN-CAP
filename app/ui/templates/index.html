@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Luyện thi Toán & Tiếng Việt lớp 5,6</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .chatbox { max-width: 600px; margin: auto; }
+        textarea { width: 100%; height: 80px; font-size: 16px; }
+        button { font-size: 16px; padding: 10px 20px; }
+        #response { margin-top: 20px; white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; min-height: 100px; }
+    </style>
+</head>
+<body>
+    <div class="chatbox">
+        <h2>Luyện thi Toán & Tiếng Việt lớp 5,6</h2>
+        
+        <label for="subject">Chọn môn học:</label>
+        <select id="subject">
+            <option value="toan">Toán</option>
+            <option value="tieng_viet">Tiếng Việt</option>
+        </select>
+
+        <br /><br />
+
+        <label for="question">Nhập câu hỏi hoặc đề bài:</label><br />
+        <textarea id="question" placeholder="Nhập câu hỏi... (Nhấn Enter để gửi)"></textarea><br />
+        <!-- Nút gửi có thể để nhưng người dùng có thể không phải nhấn -->
+        <button id="sendBtn">Gửi</button>
+
+        <div id="response"></div>
+    </div>
+
+    <script>
+        const questionInput = document.getElementById('question');
+        const sendBtn = document.getElementById('sendBtn');
+        const responseDiv = document.getElementById('response');
+        const subjectSelect = document.getElementById('subject');
+
+        // Hàm gửi câu hỏi đến backend
+        async function sendQuestion() {
+            const question = questionInput.value.trim();
+            const subject = subjectSelect.value;
+            if (!question) {
+                alert('Vui lòng nhập câu hỏi.');
+                return;
+            }
+
+            responseDiv.textContent = 'Đang xử lý...';
+
+            try {
+                const res = await fetch('/api/get_test_description', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subject: subject,
+                        test: { title: question }
+                    })
+                });
+                const data = await res.json();
+                if (data.description) {
+                    responseDiv.textContent = data.description;
+                } else if (data.error) {
+                    responseDiv.textContent = 'Lỗi: ' + data.error;
+                } else {
+                    responseDiv.textContent = 'Không có phản hồi.';
+                }
+            } catch (err) {
+                responseDiv.textContent = 'Lỗi kết nối hoặc server.';
+            }
+        }
+
+        // Gửi khi nhấn nút gửi
+        sendBtn.addEventListener('click', () => {
+            sendQuestion();
+        });
+
+        // Gửi khi nhấn Enter trong textarea (bỏ qua Shift + Enter xuống dòng)
+        questionInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); // Ngăn xuống dòng
+                sendQuestion();
+            }
+        });
+    </script>
+</body>
+</html>
