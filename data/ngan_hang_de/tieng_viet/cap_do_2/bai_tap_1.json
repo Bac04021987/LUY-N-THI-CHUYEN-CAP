@@ -1,0 +1,16 @@
+[
+  {
+    "id": "tv2_001",
+    "title": "Đọc hiểu đoạn văn nâng cao",
+    "content": "Đọc đoạn văn sau và trả lời câu hỏi: Ý nghĩa của câu chuyện là gì?",
+    "level": 2,
+    "answer": "Câu chuyện dạy chúng ta biết yêu thương và giúp đỡ người khác."
+  },
+  {
+    "id": "tv2_002",
+    "title": "Tìm từ đồng nghĩa",
+    "content": "Tìm từ đồng nghĩa của từ 'vui vẻ'.",
+    "level": 2,
+    "answer": "Hạnh phúc, vui sướng"
+  }
+]
