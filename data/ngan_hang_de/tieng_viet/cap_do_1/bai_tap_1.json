@@ -1,0 +1,16 @@
+[
+  {
+    "id": "tv1_001",
+    "title": "Đọc hiểu đoạn văn đơn giản",
+    "content": "Đọc đoạn văn sau và trả lời câu hỏi: Tác giả viết về điều gì?",
+    "level": 1,
+    "answer": "Tác giả viết về thiên nhiên."
+  },
+  {
+    "id": "tv1_002",
+    "title": "Phân biệt từ loại cơ bản",
+    "content": "Tìm từ loại của từ 'hoa' trong câu: Cô ấy thích hoa.",
+    "level": 1,
+    "answer": "Danh từ"
+  }
+]
