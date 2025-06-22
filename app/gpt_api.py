@@ -1,4 +1,4 @@
-from openai import OpenAI
+import openai
 import os
 
 class GPTClient:
@@ -6,15 +6,11 @@ class GPTClient:
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("Bạn cần thiết lập biến môi trường OPENAI_API_KEY")
-        self.client = OpenAI(api_key=api_key)
+        openai.api_key = api_key
 
     def chat(self, messages, model="gpt-4o-mini", temperature=0.7, max_tokens=1500):
-        """
-        Gửi yêu cầu chat đến OpenAI GPT và trả về phản hồi.
-        messages: list các dict {role, content} theo định dạng chat completion.
-        """
         try:
-            response = self.client.chat.completions.create(
+            response = openai.ChatCompletion.create(
                 model=model,
                 messages=messages,
                 temperature=temperature,
@@ -25,7 +21,7 @@ class GPTClient:
             print(f"Lỗi khi gọi API OpenAI: {e}")
             return None
 
-# Ví dụ sử dụng:
+# Ví dụ sử dụng
 if __name__ == "__main__":
     gpt = GPTClient()
     test_messages = [
