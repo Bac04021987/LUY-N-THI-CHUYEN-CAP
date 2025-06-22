@@ -1,0 +1,16 @@
+[
+  {
+    "id": "toan3_001",
+    "title": "Tính diện tích hình chữ nhật",
+    "content": "Một hình chữ nhật có chiều dài 8 cm và chiều rộng 5 cm. Tính diện tích hình chữ nhật đó.",
+    "level": 3,
+    "answer": 40
+  },
+  {
+    "id": "toan3_002",
+    "title": "Giải phương trình đơn giản",
+    "content": "Tìm x biết 2x + 5 = 15.",
+    "level": 3,
+    "answer": 5
+  }
+]
