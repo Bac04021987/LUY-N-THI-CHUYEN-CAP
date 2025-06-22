@@ -1,0 +1,16 @@
+[
+  {
+    "id": "hh1_001",
+    "title": "Xác định hình tam giác",
+    "content": "Cho hình có 3 cạnh bằng nhau. Đó là hình gì?",
+    "level": 1,
+    "answer": "Hình tam giác đều"
+  },
+  {
+    "id": "hh1_002",
+    "title": "Đếm số hình vuông",
+    "content": "Trong hình có 4 hình vuông nhỏ. Hỏi có bao nhiêu hình vuông?",
+    "level": 1,
+    "answer": "4"
+  }
+]
