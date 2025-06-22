@@ -1,0 +1,16 @@
+[
+  {
+    "id": "toan2_001",
+    "title": "Phép trừ có nhớ",
+    "content": "Tính 23 trừ 9 bằng bao nhiêu?",
+    "level": 2,
+    "answer": 14
+  },
+  {
+    "id": "toan2_002",
+    "title": "Phép nhân cơ bản",
+    "content": "Tính 7 nhân 6 bằng bao nhiêu?",
+    "level": 2,
+    "answer": 42
+  }
+]
