@@ -1,23 +1,19 @@
+from flask import Flask, request, jsonify, render_template, abort
 import os
 import logging
-from flask import Flask, request, jsonify, render_template, abort
 from app.modules.toan_module import ToanModule
 from app.modules.tieng_viet_module import TiengVietModule
 from app.modules.hinh_hoc_module import HinhHocModule
 
-# Thiết lập logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-# Khởi tạo Flask app
 app = Flask(__name__)
 
-# Khởi tạo module các môn học
 toan = ToanModule()
 tieng_viet = TiengVietModule()
 hinh_hoc = HinhHocModule()
 
-# API key xác thực đơn giản, lấy từ biến môi trường hoặc mặc định
 API_KEY = os.getenv("API_KEY", "123456")
 
 def check_api_key():
@@ -32,8 +28,7 @@ def home():
 
 @app.route("/api/get_test_description", methods=["POST"])
 def get_test_description():
-    # Bật/tắt xác thực API key dễ dàng
-    # check_api_key()
+    # check_api_key()  # Bật nếu cần bảo mật
 
     data = request.json
     subject = data.get("subject")
@@ -67,5 +62,4 @@ def get_test_description():
 
 if __name__ == "__main__":
     debug_mode = os.getenv("FLASK_DEBUG", "0") == "1"
-    # Chạy Flask server ở cổng 5000, host 0.0.0.0 để Render và các dịch vụ cloud truy cập được
     app.run(host="0.0.0.0", port=5000, debug=debug_mode)
