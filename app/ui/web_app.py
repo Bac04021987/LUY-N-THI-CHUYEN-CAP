@@ -5,17 +5,19 @@ from app.modules.toan_module import ToanModule
 from app.modules.tieng_viet_module import TiengVietModule
 from app.modules.hinh_hoc_module import HinhHocModule
 
+# Thiết lập logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+# Khởi tạo Flask app
 app = Flask(__name__)
 
-# Khởi tạo module môn học (mặc định tiếng Việt)
+# Khởi tạo module các môn học
 toan = ToanModule()
 tieng_viet = TiengVietModule()
 hinh_hoc = HinhHocModule()
 
-# Mã API key đơn giản cho xác thực (thay thế bằng hệ thống auth thật khi cần)
+# API key xác thực đơn giản, lấy từ biến môi trường hoặc mặc định
 API_KEY = os.getenv("API_KEY", "123456")
 
 def check_api_key():
@@ -30,7 +32,7 @@ def home():
 
 @app.route("/api/get_test_description", methods=["POST"])
 def get_test_description():
-    # Xác thực API key (bạn có thể comment dòng này nếu muốn mở public)
+    # Bật/tắt xác thực API key dễ dàng
     # check_api_key()
 
     data = request.json
@@ -41,7 +43,6 @@ def get_test_description():
     if not subject or not test:
         return jsonify({"error": "Thiếu trường 'subject' hoặc 'test'"}), 400
 
-    # Kiểm tra test có trường 'title'
     title = test.get("title")
     if not title:
         return jsonify({"error": "Trường 'title' trong 'test' không được để trống"}), 400
@@ -66,4 +67,5 @@ def get_test_description():
 
 if __name__ == "__main__":
     debug_mode = os.getenv("FLASK_DEBUG", "0") == "1"
+    # Chạy Flask server ở cổng 5000, host 0.0.0.0 để Render và các dịch vụ cloud truy cập được
     app.run(host="0.0.0.0", port=5000, debug=debug_mode)
