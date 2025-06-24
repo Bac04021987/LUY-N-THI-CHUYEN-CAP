@@ -9,8 +9,8 @@ from app.modules.hinh_hoc_module import HinhHocModule
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-# Khởi tạo Flask app
-app = Flask(__name__)
+# Khởi tạo Flask app, thêm template_folder rõ ràng để tìm đúng ui/templates/
+app = Flask(__name__, template_folder="templates")
 
 # Khởi tạo các module môn học
 toan = ToanModule()
@@ -28,6 +28,7 @@ def check_api_key():
 
 @app.route("/")
 def home():
+    # Render file index.html trong thư mục templates (app/ui/templates/index.html)
     return render_template("index.html")
 
 @app.route("/api/get_test_description", methods=["POST"])
