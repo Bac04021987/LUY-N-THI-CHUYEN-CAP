@@ -46,7 +46,7 @@ def rate_limit(ip: str):
     return True
 
 def check_api_key(x_api_key: str = Header(None)):
-    # Thay YOUR_SECRET_API_KEY bằng key thật
+    # Thay YOUR_SECRET_API_KEY bằng key thật trong biến môi trường API_KEY
     if x_api_key != os.getenv("API_KEY", "YOUR_SECRET_API_KEY"):
         raise HTTPException(status_code=401, detail="API Key không hợp lệ")
 
@@ -109,32 +109,33 @@ async def get_test_description(request: Request, x_api_key: str = Header(None)):
 
         subject = data.get("subject", "toan").lower()
         test_id = data.get("test_id")
+        title = data.get("title") or data.get("test", {}).get("title")
 
         if subject not in VALID_SUBJECTS:
             return JSONResponse({"error": "Môn học không hợp lệ."}, status_code=400)
-        if not test_id:
-            return JSONResponse({"error": "Thiếu test_id trong yêu cầu."}, status_code=400)
+
+        if not test_id and not title:
+            return JSONResponse({"error": "Thiếu test_id hoặc title trong yêu cầu."}, status_code=400)
 
         found_test = None
-        for level in VALID_LEVELS:
-            tests = data_loader.load_subject_level(subject, level)
-            for t in tests:
-                if t.get("id") == test_id:
-                    found_test = t
-                    break
-            if found_test:
-                break
+        if test_id:
+            found_test = data_loader.find_test_by_id(subject, test_id)
+
+        if not found_test and title:
+            found_test = {"id": "temp", "title": title}
 
         if not found_test:
-            return JSONResponse({"error": "Không tìm thấy đề thi theo test_id."}, status_code=404)
+            return JSONResponse({"error": "Không tìm thấy đề thi phù hợp."}, status_code=404)
 
         messages = [
             {"role": "system", "content": f"Bạn là trợ lý giáo dục {subject.capitalize()} lớp 5 chuẩn bị thi lên lớp 6."},
             {"role": "user", "content": f"Giúp tôi mô tả đề thi {subject.capitalize()} có tiêu đề: {found_test.get('title', '')}"}
         ]
 
-        response = gpt_client.chat_completion(messages)
-        return {"test_id": test_id, "description": response}
+        response = gpt_client.chat(messages)
+        logging.info(f"Phản hồi GPT: {response}")
+
+        return {"test_id": test_id or "temp", "description": response}
 
     except Exception as e:
         logging.error(f"Lỗi xử lý yêu cầu /api/get_test_description/: {e}")
