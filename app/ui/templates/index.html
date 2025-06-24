@@ -2,41 +2,92 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
-    <title>Luyện thi Toán & Tiếng Việt lớp 5,6</title>
+    <title>AI Agent đơn giản trên Render</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .chatbox { max-width: 600px; margin: auto; }
-        textarea { width: 100%; height: 80px; font-size: 16px; }
-        button { font-size: 16px; padding: 10px 20px; }
-        #response { margin-top: 20px; white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; min-height: 100px; }
-        h2 { text-align: center; }
-        label, select, textarea, button { display: block; width: 100%; margin-bottom: 15px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .chatbox {
+            max-width: 600px;
+            margin: auto;
+        }
+        /* Thanh nhập và nút gửi nằm cùng hàng */
+        .input-group {
+            display: flex;
+            gap: 5px;
+            margin-top: 20px;
+        }
+        #questionInput {
+            flex-grow: 1;
+            padding: 8px 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #sendBtn {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #sendBtn:hover {
+            background-color: #0056b3;
+        }
+        #response {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 100px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        label, select {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select {
+            width: 100%;
+            padding: 6px 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
     <div class="chatbox">
-        <h2>Luyện thi Toán & Tiếng Việt lớp 5,6</h2>
-        
-        <label for="subject">Chọn môn học:</label>
-        <select id="subject">
+        <h2>Luyện Thi Chuyển Cấp 2 môn Toán, Tiếng Việt</h2>
+
+        <label for="subjectSelect">Chọn môn học:</label>
+        <select id="subjectSelect">
             <option value="toan">Toán</option>
             <option value="tieng_viet">Tiếng Việt</option>
             <option value="hinh_hoc">Hình học</option>
         </select>
 
-        <label for="question">Nhập câu hỏi hoặc đề bài:</label>
-        <textarea id="question" placeholder="Nhập câu hỏi... (Nhấn Enter để gửi, Shift+Enter xuống dòng)"></textarea>
-
-        <button id="sendBtn">Gửi</button>
+        <div class="input-group">
+            <input type="text" id="questionInput" placeholder="Nhập câu hỏi..." autocomplete="off" />
+            <button id="sendBtn">Gửi</button>
+        </div>
 
         <div id="response"></div>
     </div>
 
     <script>
-        const questionInput = document.getElementById('question');
+        const questionInput = document.getElementById('questionInput');
         const sendBtn = document.getElementById('sendBtn');
         const responseDiv = document.getElementById('response');
-        const subjectSelect = document.getElementById('subject');
+        const subjectSelect = document.getElementById('subjectSelect');
 
         async function sendQuestion() {
             const question = questionInput.value.trim();
@@ -58,9 +109,9 @@
                     })
                 });
                 const data = await res.json();
-                if(data.description) {
+                if (data.description) {
                     responseDiv.textContent = data.description;
-                } else if(data.error) {
+                } else if (data.error) {
                     responseDiv.textContent = 'Lỗi: ' + data.error;
                 } else {
                     responseDiv.textContent = 'Không có phản hồi.';
@@ -70,15 +121,11 @@
             }
         }
 
-        // Gửi khi nhấn nút gửi
-        sendBtn.addEventListener('click', () => {
-            sendQuestion();
-        });
+        sendBtn.addEventListener('click', sendQuestion);
 
-        // Gửi khi nhấn Enter (không kèm Shift)
-        questionInput.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault(); // Ngăn xuống dòng
+        questionInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
                 sendQuestion();
             }
         });
