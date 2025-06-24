@@ -10,28 +10,32 @@ import os
 
 app = FastAPI(title="AI Agent Lớp 5 lên 6")
 
+# Thiết lập logging cơ bản
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# Cho phép CORS (tạm thời mở hết)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Khởi tạo các đối tượng chính
 gpt_client = GPTClient()
 data_loader = DataLoader()
 
+# Các môn học và cấp độ hợp lệ
 VALID_SUBJECTS = {"toan", "tieng_viet"}
 VALID_LEVELS = {1, 2, 3}
 
-# Cấu hình thư mục chứa templates (HTML)
+# Thư mục chứa template HTML (giao diện web)
 templates = Jinja2Templates(directory="app/ui/templates")
 
-# Rate limiting đơn giản
-rate_limit_window = 10
-rate_limit_max = 5
+# Rate limiting (giới hạn số request theo IP)
+rate_limit_window = 10  # giây
+rate_limit_max = 5      # số request tối đa trong window
 rate_limit_data = {}
 
 def rate_limit(ip: str):
@@ -39,6 +43,7 @@ def rate_limit(ip: str):
     window_start = now - rate_limit_window
     if ip not in rate_limit_data:
         rate_limit_data[ip] = []
+    # Xóa các request cũ hơn window_start
     rate_limit_data[ip] = [t for t in rate_limit_data[ip] if t > window_start]
     if len(rate_limit_data[ip]) >= rate_limit_max:
         return False
@@ -46,17 +51,26 @@ def rate_limit(ip: str):
     return True
 
 def check_api_key(x_api_key: str = Header(None)):
-    # Thay YOUR_SECRET_API_KEY bằng key thật trong biến môi trường API_KEY
-    if x_api_key != os.getenv("API_KEY", "YOUR_SECRET_API_KEY"):
+    # Lấy API_KEY từ biến môi trường, mặc định 'YOUR_SECRET_API_KEY'
+    valid_key = os.getenv("API_KEY", "YOUR_SECRET_API_KEY")
+    if x_api_key != valid_key:
         raise HTTPException(status_code=401, detail="API Key không hợp lệ")
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
+    """
+    Trả về trang web giao diện HTML (index.html)
+    """
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/api/get_test/")
 async def get_test(request: Request, x_api_key: str = Header(None)):
+    """
+    API lấy danh sách đề thi theo môn và cấp độ.
+    Yêu cầu Header có x-api-key đúng.
+    """
     check_api_key(x_api_key)
+    
     client_ip = request.client.host
     if not rate_limit(client_ip):
         logging.warning(f"Rate limit exceeded for IP: {client_ip}")
@@ -82,6 +96,7 @@ async def get_test(request: Request, x_api_key: str = Header(None)):
             logging.info(f"Không tìm thấy đề thi phù hợp cho {subject} cấp độ {level}")
             return JSONResponse({"error": f"Không tìm thấy đề thi phù hợp cho môn {subject} cấp độ {level}."}, status_code=404)
 
+        # Trả về id và tiêu đề đề thi
         result = [{"id": t.get("id", "unknown"), "title": t.get("title", "Không có tiêu đề")} for t in tests]
 
         logging.info(f"Trả về danh sách đề thi: {result}")
@@ -89,12 +104,17 @@ async def get_test(request: Request, x_api_key: str = Header(None)):
         return {"subject": subject, "level": level, "tests": result}
 
     except Exception as e:
-        logging.error(f"Lỗi xử lý yêu cầu /api/get_test/: {e}", exc_info=True)
+        logging.error(f"Lỗi xử lý yêu cầu /api/get_test/: {e}")
         return JSONResponse({"error": "Đã xảy ra lỗi trong quá trình xử lý."}, status_code=500)
 
 @app.post("/api/get_test_description/")
 async def get_test_description(request: Request, x_api_key: str = Header(None)):
+    """
+    API lấy mô tả chi tiết cho đề thi theo test_id hoặc title.
+    Yêu cầu Header có x-api-key đúng.
+    """
     check_api_key(x_api_key)
+
     client_ip = request.client.host
     if not rate_limit(client_ip):
         logging.warning(f"Rate limit exceeded for IP: {client_ip}")
@@ -108,7 +128,34 @@ async def get_test_description(request: Request, x_api_key: str = Header(None)):
         test_id = data.get("test_id")
         title = data.get("title") or data.get("test", {}).get("title")
 
-        logging.info(f"subject={subject}, test_id={test_id}, title={title}")
-
         if subject not in VALID_SUBJECTS:
-            return JSONResponse({"error": "Môn học không hợp lệ.
+            return JSONResponse({"error": "Môn học không hợp lệ."}, status_code=400)
+
+        if not test_id and not title:
+            return JSONResponse({"error": "Thiếu test_id hoặc title trong yêu cầu."}, status_code=400)
+
+        found_test = None
+        if test_id:
+            found_test = data_loader.find_test_by_id(subject, test_id)
+
+        # Nếu không tìm thấy test theo id, tạo test tạm theo title (để mô tả)
+        if not found_test and title:
+            found_test = {"id": "temp", "title": title}
+
+        if not found_test:
+            return JSONResponse({"error": "Không tìm thấy đề thi phù hợp."}, status_code=404)
+
+        # Chuẩn bị prompt cho GPT
+        messages = [
+            {"role": "system", "content": f"Bạn là trợ lý giáo dục {subject.capitalize()} lớp 5 chuẩn bị thi lên lớp 6."},
+            {"role": "user", "content": f"Giúp tôi mô tả đề thi {subject.capitalize()} có tiêu đề: {found_test.get('title', '')}"}
+        ]
+
+        response = gpt_client.chat(messages)
+        logging.info(f"Phản hồi GPT: {response}")
+
+        return {"test_id": test_id or "temp", "description": response}
+
+    except Exception as e:
+        logging.error(f"Lỗi xử lý yêu cầu /api/get_test_description/: {e}")
+        return JSONResponse({"error": "Đã xảy ra lỗi trong quá trình xử lý."}, status_code=500)
