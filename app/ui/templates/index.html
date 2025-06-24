@@ -2,136 +2,88 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
-    <title>AI Agent đơn giản trên Render</title>
+    <title>AI Agent hỏi đáp</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f7f9fc;
+            margin: 30px auto;
+            max-width: 600px;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
         }
         h2 {
             text-align: center;
-            color: #333;
-        }
-        .chatbox {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-        }
-        .input-group {
-            display: flex;
-            gap: 0;
-            margin-top: 20px;
-        }
-        #questionInput {
-            flex-grow: 1;
-            padding: 10px 15px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-            outline: none;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-        #questionInput:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-        #sendBtn {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: 1px solid #007bff;
-            border-left: none;
-            border-top-right-radius: 5px;
-            border-bottom-right-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-        #sendBtn:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-        #response {
-            margin-top: 25px;
-            white-space: pre-wrap;
-            border: 1px solid #ccc;
-            padding: 15px;
-            min-height: 120px;
-            border-radius: 8px;
-            background-color: #fafafa;
-            color: #333;
-            font-size: 16px;
+            margin-bottom: 20px;
         }
         label, select {
             display: block;
-            margin-top: 15px;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #444;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
-        select {
+        select, input[type="text"], button {
             width: 100%;
-            padding: 8px 12px;
+            box-sizing: border-box;
             font-size: 16px;
+            padding: 10px;
+            margin-bottom: 15px;
             border-radius: 5px;
             border: 1px solid #ccc;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
         }
-        select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #response {
+            min-height: 150px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+            font-size: 16px;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div class="chatbox">
-        <h2>Luyện Thi Chuyển Cấp 2 môn Toán, Tiếng Việt</h2>
+    <h2>AI Agent - Luyện thi Toán & Tiếng Việt lớp 5,6</h2>
 
-        <label for="subjectSelect">Chọn môn học:</label>
-        <select id="subjectSelect">
-            <option value="toan">Toán</option>
-            <option value="tieng_viet">Tiếng Việt</option>
-            <option value="hinh_hoc">Hình học</option>
-        </select>
+    <label for="subject">Chọn môn học:</label>
+    <select id="subject">
+        <option value="toan">Toán</option>
+        <option value="tieng_viet">Tiếng Việt</option>
+        <option value="hinh_hoc">Hình học</option>
+    </select>
 
-        <div class="input-group">
-            <input
-                type="text"
-                id="questionInput"
-                placeholder="Nhập câu hỏi... (Nhấn Enter để gửi, Shift+Enter xuống dòng)"
-                autocomplete="off"
-            />
-            <button id="sendBtn">Gửi</button>
-        </div>
+    <input type="text" id="question" placeholder="Nhập câu hỏi..." autocomplete="off" />
 
-        <div id="response"></div>
-    </div>
+    <button id="sendBtn">Gửi</button>
+
+    <div id="response">Kết quả sẽ hiện ở đây...</div>
 
     <script>
-        const questionInput = document.getElementById("questionInput");
         const sendBtn = document.getElementById("sendBtn");
+        const questionInput = document.getElementById("question");
         const responseDiv = document.getElementById("response");
-        const subjectSelect = document.getElementById("subjectSelect");
+        const subjectSelect = document.getElementById("subject");
 
         async function sendQuestion() {
             const question = questionInput.value.trim();
             const subject = subjectSelect.value;
             if (!question) {
-                alert("Vui lòng nhập câu hỏi.");
+                alert("Vui lòng nhập câu hỏi");
                 return;
             }
-
             responseDiv.textContent = "Đang xử lý...";
 
             try {
-                const res = await fetch("/api/get_test_description", {
+                const response = await fetch("/api/get_test_description", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -139,7 +91,7 @@
                         test: { title: question },
                     }),
                 });
-                const data = await res.json();
+                const data = await response.json();
                 if (data.description) {
                     responseDiv.textContent = data.description;
                 } else if (data.error) {
@@ -147,16 +99,13 @@
                 } else {
                     responseDiv.textContent = "Không có phản hồi.";
                 }
-                questionInput.value = ""; // Xoá câu hỏi sau khi gửi
+                questionInput.value = "";
             } catch (err) {
                 responseDiv.textContent = "Lỗi kết nối hoặc server.";
             }
         }
 
-        sendBtn.addEventListener("click", () => {
-            sendQuestion();
-        });
-
+        sendBtn.addEventListener("click", sendQuestion);
         questionInput.addEventListener("keydown", function (event) {
             if (event.key === "Enter" && !event.shiftKey) {
                 event.preventDefault();
