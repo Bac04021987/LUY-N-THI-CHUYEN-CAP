@@ -9,6 +9,8 @@
         textarea { width: 100%; height: 80px; font-size: 16px; }
         button { font-size: 16px; padding: 10px 20px; }
         #response { margin-top: 20px; white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; min-height: 100px; }
+        h2 { text-align: center; }
+        label, select, textarea, button { display: block; width: 100%; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -19,13 +21,12 @@
         <select id="subject">
             <option value="toan">Toán</option>
             <option value="tieng_viet">Tiếng Việt</option>
+            <option value="hinh_hoc">Hình học</option>
         </select>
 
-        <br /><br />
+        <label for="question">Nhập câu hỏi hoặc đề bài:</label>
+        <textarea id="question" placeholder="Nhập câu hỏi... (Nhấn Enter để gửi, Shift+Enter xuống dòng)"></textarea>
 
-        <label for="question">Nhập câu hỏi hoặc đề bài:</label><br />
-        <textarea id="question" placeholder="Nhập câu hỏi... (Nhấn Enter để gửi)"></textarea><br />
-        <!-- Nút gửi có thể để nhưng người dùng có thể không phải nhấn -->
         <button id="sendBtn">Gửi</button>
 
         <div id="response"></div>
@@ -37,7 +38,6 @@
         const responseDiv = document.getElementById('response');
         const subjectSelect = document.getElementById('subject');
 
-        // Hàm gửi câu hỏi đến backend
         async function sendQuestion() {
             const question = questionInput.value.trim();
             const subject = subjectSelect.value;
@@ -58,9 +58,9 @@
                     })
                 });
                 const data = await res.json();
-                if (data.description) {
+                if(data.description) {
                     responseDiv.textContent = data.description;
-                } else if (data.error) {
+                } else if(data.error) {
                     responseDiv.textContent = 'Lỗi: ' + data.error;
                 } else {
                     responseDiv.textContent = 'Không có phản hồi.';
@@ -75,7 +75,7 @@
             sendQuestion();
         });
 
-        // Gửi khi nhấn Enter trong textarea (bỏ qua Shift + Enter xuống dòng)
+        // Gửi khi nhấn Enter (không kèm Shift)
         questionInput.addEventListener('keydown', function(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault(); // Ngăn xuống dòng
