@@ -12,6 +12,7 @@ class GPTClient:
         """
         Gửi yêu cầu chat đến OpenAI GPT và trả về phản hồi.
         messages: list các dict theo định dạng chat completion.
+        model: tên mô hình GPT
         """
         try:
             response = openai.ChatCompletion.create(
@@ -20,15 +21,12 @@ class GPTClient:
                 temperature=temperature,
                 max_tokens=max_tokens
             )
-            content = response.choices[0].message.content
-            print(f"GPT Response: {content}")
-            return content
+            return response.choices[0].message.content
         except Exception as e:
-            error_msg = f"Lỗi khi gọi API OpenAI: {e}"
-            print(error_msg)
-            return error_msg
+            print(f"Lỗi khi gọi API OpenAI: {e}")
+            return None
 
-# Ví dụ sử dụng:
+# Ví dụ sử dụng khi chạy riêng
 if __name__ == "__main__":
     gpt = GPTClient()
     test_messages = [
