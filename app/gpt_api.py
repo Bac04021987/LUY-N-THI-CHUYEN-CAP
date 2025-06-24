@@ -20,10 +20,13 @@ class GPTClient:
                 temperature=temperature,
                 max_tokens=max_tokens
             )
-            return response.choices[0].message.content
+            content = response.choices[0].message.content
+            print(f"GPT Response: {content}")
+            return content
         except Exception as e:
-            print(f"Lỗi khi gọi API OpenAI: {e}")
-            return None
+            error_msg = f"Lỗi khi gọi API OpenAI: {e}"
+            print(error_msg)
+            return error_msg
 
 # Ví dụ sử dụng:
 if __name__ == "__main__":
