@@ -7,60 +7,86 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f7f9fc;
         }
         h2 {
             text-align: center;
+            color: #333;
         }
         .chatbox {
             max-width: 600px;
-            margin: auto;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
         }
-        /* Thanh nhập và nút gửi nằm cùng hàng */
         .input-group {
             display: flex;
-            gap: 5px;
+            gap: 0;
             margin-top: 20px;
         }
         #questionInput {
             flex-grow: 1;
-            padding: 8px 10px;
+            padding: 10px 15px;
             font-size: 16px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        #questionInput:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
         #sendBtn {
-            padding: 8px 20px;
+            padding: 10px 20px;
             font-size: 16px;
             background-color: #007bff;
             color: white;
-            border: none;
-            border-radius: 4px;
+            border: 1px solid #007bff;
+            border-left: none;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
         }
         #sendBtn:hover {
             background-color: #0056b3;
+            border-color: #0056b3;
         }
         #response {
-            margin-top: 20px;
+            margin-top: 25px;
             white-space: pre-wrap;
             border: 1px solid #ccc;
-            padding: 10px;
-            min-height: 100px;
-            border-radius: 4px;
-            background-color: #f9f9f9;
+            padding: 15px;
+            min-height: 120px;
+            border-radius: 8px;
+            background-color: #fafafa;
+            color: #333;
+            font-size: 16px;
         }
         label, select {
             display: block;
             margin-top: 15px;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
         }
         select {
             width: 100%;
-            padding: 6px 10px;
+            padding: 8px 12px;
             font-size: 16px;
-            border-radius: 4px;
+            border-radius: 5px;
             border: 1px solid #ccc;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
     </style>
 </head>
@@ -76,7 +102,12 @@
         </select>
 
         <div class="input-group">
-            <input type="text" id="questionInput" placeholder="Nhập câu hỏi..." autocomplete="off" />
+            <input
+                type="text"
+                id="questionInput"
+                placeholder="Nhập câu hỏi... (Nhấn Enter để gửi, Shift+Enter xuống dòng)"
+                autocomplete="off"
+            />
             <button id="sendBtn">Gửi</button>
         </div>
 
@@ -84,47 +115,50 @@
     </div>
 
     <script>
-        const questionInput = document.getElementById('questionInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const responseDiv = document.getElementById('response');
-        const subjectSelect = document.getElementById('subjectSelect');
+        const questionInput = document.getElementById("questionInput");
+        const sendBtn = document.getElementById("sendBtn");
+        const responseDiv = document.getElementById("response");
+        const subjectSelect = document.getElementById("subjectSelect");
 
         async function sendQuestion() {
             const question = questionInput.value.trim();
             const subject = subjectSelect.value;
             if (!question) {
-                alert('Vui lòng nhập câu hỏi.');
+                alert("Vui lòng nhập câu hỏi.");
                 return;
             }
 
-            responseDiv.textContent = 'Đang xử lý...';
+            responseDiv.textContent = "Đang xử lý...";
 
             try {
-                const res = await fetch('/api/get_test_description', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const res = await fetch("/api/get_test_description", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         subject: subject,
-                        test: { title: question }
-                    })
+                        test: { title: question },
+                    }),
                 });
                 const data = await res.json();
                 if (data.description) {
                     responseDiv.textContent = data.description;
                 } else if (data.error) {
-                    responseDiv.textContent = 'Lỗi: ' + data.error;
+                    responseDiv.textContent = "Lỗi: " + data.error;
                 } else {
-                    responseDiv.textContent = 'Không có phản hồi.';
+                    responseDiv.textContent = "Không có phản hồi.";
                 }
+                questionInput.value = ""; // Xoá câu hỏi sau khi gửi
             } catch (err) {
-                responseDiv.textContent = 'Lỗi kết nối hoặc server.';
+                responseDiv.textContent = "Lỗi kết nối hoặc server.";
             }
         }
 
-        sendBtn.addEventListener('click', sendQuestion);
+        sendBtn.addEventListener("click", () => {
+            sendQuestion();
+        });
 
-        questionInput.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
+        questionInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" && !event.shiftKey) {
                 event.preventDefault();
                 sendQuestion();
             }
